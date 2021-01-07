@@ -11,6 +11,7 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -84,10 +85,7 @@ public class RestExceptionHandle extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatus status,
-                                                                  WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorDetails errorDetails = ErrorDetails.Builder
                 .newBuilder()
                 .timestamp(new Date().getTime())
@@ -97,5 +95,18 @@ public class RestExceptionHandle extends ResponseEntityExceptionHandler {
                 .developerMessage(ex.getClass().getName())
                 .build();
         return new ResponseEntity<>(errorDetails, headers, status);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<Object> handleException(IllegalArgumentException ex) {
+        ErrorDetails errorDetails = ErrorDetails.Builder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(400)
+                .title("CPF inválido. Por favor, insira um cpf válido.")
+                .details(ex.getMessage())
+                .developerMessage(ex.getClass().getName())
+                .build();
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 }

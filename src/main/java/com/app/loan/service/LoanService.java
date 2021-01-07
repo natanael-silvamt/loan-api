@@ -1,5 +1,7 @@
 package com.app.loan.service;
 
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import com.app.loan.model.Client;
 import com.app.loan.model.ClientResponse;
 import com.app.loan.model.Modality;
@@ -14,15 +16,23 @@ public class LoanService {
     private final List<Modality> modalities = new ArrayList<>();
 
     public ClientResponse checkClient(Client client){
-        if(modalities.size() > 0) modalities.clear();
+        CPFValidator validator = new CPFValidator();
 
-        modalities.add(new Modality("Pessoal", 4));
-        checkConsignado(client);
+        try {
+            validator.assertValid(client.getCpf());
 
-        if(client.getSalary() >= 5000){
-            modalities.add(new Modality("Consignado", 2));
+            if(modalities.size() > 0) modalities.clear();
+
+            modalities.add(new Modality("Pessoal", 4));
+            checkConsignado(client);
+
+            if(client.getSalary() >= 5000){
+                modalities.add(new Modality("Consignado", 2));
+            }
+            return new ClientResponse(client.getName(), modalities);
+        } catch (InvalidStateException e){
+            throw new IllegalArgumentException("CPF invalid!");
         }
-        return new ClientResponse(client.getName(), modalities);
     }
 
     private void checkConsignado(Client client){
