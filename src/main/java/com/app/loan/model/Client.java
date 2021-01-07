@@ -5,9 +5,9 @@ public class Client {
     private String cpf;
     private Integer age;
     private String uf;
-    private Float salary;
+    private Double salary;
 
-    public Client(String name, String cpf, Integer age, String uf, Float salary) {
+    public Client(String name, String cpf, Integer age, String uf, Double salary) {
         this.name = name;
         this.cpf = cpf;
         this.age = age;
@@ -49,11 +49,22 @@ public class Client {
         this.uf = uf;
     }
 
-    public Float getSalary() {
+    public Double getSalary() {
         return salary;
     }
 
-    public void setSalary(Float salary) {
+    public void setSalary(Double salary) {
         this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "name='" + name + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", age=" + age +
+                ", uf='" + uf + '\'' +
+                ", salary=" + salary +
+                '}';
     }
 }
